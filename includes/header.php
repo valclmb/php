@@ -1,5 +1,6 @@
 <?php
     session_start();
+    require_once 'autoload.php';
 
     // Si aucun titre de page n'est défini avant l'include de ce fichier, on met un titre par défaut (voir l'utilisation de cette variable un peu plus bas, dans la balise <title>)
     if (!isset($pageTitle)) {
@@ -57,45 +58,52 @@
     if (!empty($_SESSION['login'])) {
         $login = $_SESSION['login'];
     }
+
+    $cart = new Cart();
 ?>
 <html lang="fr">
-    <head>
-        <!-- On ajoute le style de Boostrap ici -->
-        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/css/bootstrap.min.css" integrity="sha384-TX8t27EcRE3e/ihU7zmQxVncDAy5uIKz4rEkgIXeMed4M0jlfIDPvg6uqKI2xXr2" crossorigin="anonymous">
 
-        <!--Fontawesome CDN-->
-        <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.3.1/css/all.css" integrity="sha384-mzrmE5qonljUremFsqc01SB46JvROS7bZs3IO2EmfFsd15uHvIt+Y8vEf7N7fWAU" crossorigin="anonymous">
+<head>
+    <!-- On ajoute le style de Boostrap ici -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/css/bootstrap.min.css"
+        integrity="sha384-TX8t27EcRE3e/ihU7zmQxVncDAy5uIKz4rEkgIXeMed4M0jlfIDPvg6uqKI2xXr2" crossorigin="anonymous">
 
-        <!-- Ici, le style dédié au formulaire de connexion. Notez le chemin : même si on est dans un fichier inclu (qui est dans le dossier includes), ce qui compte, c'est le chemin depuis le script qui l'appelle (c'est aussi pour ça que l'on met toutes nos pages à la racine de notre projet) -->
-        <link rel="stylesheet" href="css/login.css">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <meta charset="UTF-8">
-        <title>
-            <?php
+    <!--Fontawesome CDN-->
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.3.1/css/all.css"
+        integrity="sha384-mzrmE5qonljUremFsqc01SB46JvROS7bZs3IO2EmfFsd15uHvIt+Y8vEf7N7fWAU" crossorigin="anonymous">
+
+    <!-- Ici, le style dédié au formulaire de connexion. Notez le chemin : même si on est dans un fichier inclu (qui est dans le dossier includes), ce qui compte, c'est le chemin depuis le script qui l'appelle (c'est aussi pour ça que l'on met toutes nos pages à la racine de notre projet) -->
+    <link rel="stylesheet" href="css/login.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="UTF-8">
+    <title>
+        <?php
                 // Ici, on appelle le titre de notre page, défini soit au début de ce fichier, soit avant l'appel du include
                 echo $pageTitle;
             ?>
-        </title>
-    </head>
-    <body>
+    </title>
+</head>
+
+<body>
     <!-- Menu (navbar) tiré tout droit de la doc de Bootstrap. On l'adapte simplement à notre besoin. -->
     <nav class="navbar navbar-expand-lg navbar-light bg-light">
         <a class="navbar-brand" href="#">Les beaux bonnets</a>
-        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
         </button>
 
         <div class="collapse navbar-collapse" id="navbarSupportedContent">
             <ul class="navbar-nav mr-auto">
-            <li class="nav-item active">
-                <!-- Notez le chemin : même si on est dans un fichier inclu (qui est dans le dossier includes), ce qui compte, c'est le chemin depuis le script qui l'appelle (c'est aussi pour ça que l'on met toutes nos pages à la racine de notre projet) -->
-                <a class="nav-link" href="index.php">Accueil</a>
-            </li>
-            <li class="nav-item">
-                <!-- Notez le chemin : même si on est dans un fichier inclu (qui est dans le dossier includes), ce qui compte, c'est le chemin depuis le script qui l'appelle (c'est aussi pour ça que l'on met toutes nos pages à la racine de notre projet) -->
-                <a class="nav-link" href="list.php">Liste</a>
-            </li>
-            <?php if (empty($login)) {//Si l'utilisateur n'est pas connecté, on lui indique la page de connexion
+                <li class="nav-item active">
+                    <!-- Notez le chemin : même si on est dans un fichier inclu (qui est dans le dossier includes), ce qui compte, c'est le chemin depuis le script qui l'appelle (c'est aussi pour ça que l'on met toutes nos pages à la racine de notre projet) -->
+                    <a class="nav-link" href="index.php">Accueil</a>
+                </li>
+                <li class="nav-item">
+                    <!-- Notez le chemin : même si on est dans un fichier inclu (qui est dans le dossier includes), ce qui compte, c'est le chemin depuis le script qui l'appelle (c'est aussi pour ça que l'on met toutes nos pages à la racine de notre projet) -->
+                    <a class="nav-link" href="list.php">Liste</a>
+                </li>
+                <?php if (empty($login)) {//Si l'utilisateur n'est pas connecté, on lui indique la page de connexion
                 ?>
                 <li class="nav-item">
                     <!-- Notez le chemin : même si on est dans un fichier inclu (qui est dans le dossier includes), ce qui compte, c'est le chemin depuis le script qui l'appelle (c'est aussi pour ça que l'on met toutes nos pages à la racine de notre projet) -->
@@ -114,11 +122,11 @@
             </ul>
             <?php if (!empty($login)) {
                 ?>
-                <span class="my-2">
-                    <?php echo $login; ?>
-                </span>
-                <?php
+            <span class="my-2">
+                <?php echo $login; ?>
+            </span>
+            <?php
             }
             ?>
         </div>
-        </nav>
+    </nav>

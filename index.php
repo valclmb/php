@@ -3,7 +3,7 @@
     include 'includes/header.php';
 ?>
 <div class="row">
-<?php
+    <?php
     // Nous avons ici 4 méthodes possibles (il y en a sûrement d'autres)
     // pour récupérer les 3 premiers éléments de notre tableau.
 
@@ -51,4 +51,4 @@
 ?>
 </div>
 
-<?php include 'includes/footer.php'; ?>
+<?php include 'includes/footer.php';

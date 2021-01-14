@@ -23,15 +23,15 @@ function prixHT($prix)
  * Ici, on fait un affichage purement en PHP.
  * On affiche une ligne du tableau HTML, à partir d'une ligne du tableau PHP principal.
  *
- * @var array $produit
+ * @var Beanie $produit
  * @var string|int $key
  *
  * @return void Ce void indique qu'il s'agit d'une procédure, et non d'une fonction. void indique qu'elle ne retourne rien, même pas null !
  */
-function afficheProduit($produit)
+function afficheProduit(Beanie $produit)
 {
     // Si le prix est inférieur ou égale à douze, la couleur (du prix) va être verte, bleue sinon
-    if ($produit['price'] <= 12) {
+    if ($produit->price <= 12) {
         $color = "green";
     } else {
         $color = "blue";
@@ -41,19 +41,19 @@ function afficheProduit($produit)
     echo '
     <tr>
         <td>
-            '.$produit[PRODUCT_NAME].
+            '.$produit->name.
         '</td>
         <td>
-            '.prixHT($produit['price']).'€
+            '.$produit->priceHT.'€
         </td>
         <td style="color:'.$color.'">
-            '.$produit['price'].'€
+            '.$produit->price.'€
         </td>
         <td>
-            '.$produit['description'].'
+            '.$produit->description.'
         </td>
         <td>
-            <a href="cart-add.php?id='.$produit['id'].'">Ajouter au panier</a>
+            <a href="cart.php?add='.$produit->id.'">Ajouter au panier</a>
         </td>
     </tr>';
 }
@@ -61,17 +61,17 @@ function afficheProduit($produit)
 /**
  * Comme précédemment, nous affichons un produit, mais cette fois en utilisant
  * les cards de Bootstrap
- * @param $produit
+ * @param Beanie $produit
  *
  * @return void
  */
-function cardProduit(array $produit): void
+function cardProduit(Beanie $produit): void
 {
     echo '<div class="card col-md-4 col-sm-12">
-        <img src="images/'.$produit['image'].'" class="card-img-top" style="max-width: 10rem;" alt="'.$produit['name'].'">
+        <img src="images/'.$produit->image.'" class="card-img-top" style="max-width: 10rem;" alt="'.$produit->name.'">
         <div class="card-body">
-            <h2 class="card-title">'.$produit['name'].'</h2>
-            <p class="card-text">'.$produit['description'].'</p>
+            <h2 class="card-title">'.$produit->name.'</h2>
+            <p class="card-text">'.$produit->description.'</p>
         </div>
     </div>';
 }
@@ -85,100 +85,24 @@ function cardProduit(array $produit): void
  *
  * @return array
  */
-function findInProducts(array $products, ?string $id): array
+function findInProducts(array $products, ?string $id): ?Beanie
 {
-    // foreach ($products as $product) {
-    //     if ($product['id'] == $id) {
-    //         return $product;
-    //     }
-    // }
+    foreach ($products as $product) {
+        if ($product->id == $id) {
+            return $product;
+        }
+    }
 
-    // return [];
+    return null;
 
     // Doc de la fonction : https://www.php.net/manual/fr/function.array-filter.php
     // Notez l'utilisation d'une fonction anonyme (ou fonction de callback) pour filtrer les éléments du tableau. Cette méthode et celle au dessus (utilisant foreach) sont strictement identiques.
     // Pour utiliser le paramètre $id dans la fonction anonyme, il faut utiliser le mot clé use (sans cela, $id n'est pas défini dans la fonction : tout ce qui existe dans une fonction sont ses paramètres ou ce qui a été explicitement défini comme disponible)
-    $results = array_filter($products, function ($element) use ($id) {
-        return $element['id'] == $id;
-    });
+    // $results = array_filter($products, function (Beanie $element) use ($id) {
+    //     return $element->id == $id;
+    // });
 
-    // Pour récupérer la première entrée du tableau, quel que soit son index, on utilise la fonction current
-    // Doc de la fonction : https://www.php.net/manual/fr/function.current.php
-    return current($results); // $results[0]
-}
-
-/**
- * @return array
- */
-function getCartContent(): array
-{
-    if (!isset($_SESSION['cart'])) {
-        $_SESSION['cart'] = [];
-    }
-    return $_SESSION['cart'];
-}
-
-/**
- * Cette fonction va ajouter un produit au panier. Nous ne retiendrons que l'id et la quantité, vu que toutes les informations sont disponibles rapidement à l'aide de l'id.
- * Nous aurions également pu passer un id plutôt qu'un product entier, pour simplifier la fonction.
- * Je ne l'ai pas fait au cas où l'on souhaiterais passer d'autres données au panier (ce qui se discute largement ;) )
- *
- * @var array $product
- *
- * @return int
- */
-function addToCart($product): int
-{
-    getCartContent();
-
-    $id = $product['id'];
-
-    // Si on n'a pas cet élément dans le panier, on initialise l'entrée du tableau $_SESSION['cart'] correspondante.
-    if (!isset($_SESSION['cart'][$id])) {
-        $_SESSION['cart'][$id] = 0;
-    }
-    $_SESSION['cart'][$id]++; // On ajoute le produit au panier (dans les faits, on augmente la quantité de l'entrée ayant pour id $id)
-
-    return $_SESSION['cart'][$id];
-}
-
-/**
- * Cette fonction va enlever un produit du panier. Nous ne retiendrons que l'id et la quantité, vu que toutes les informations sont disponibles rapidement à l'aide de l'id.
- * Nous aurions également pu passer un id plutôt qu'un product entier, pour simplifier la fonction.
- * Je ne l'ai pas fait au cas où l'on souhaiterais passer d'autres données au panier (ce qui se discute largement ;) )
- *
- * @var array $product
- *
- * @return int
- */
-function removeOneFromCart($product): int
-{
-    getCartContent();
-
-    $id = $product['id'];
-
-    // Si on n'a pas cet élément dans le panier, ne touche pas au panier, mais on renvoie 0
-    if (!isset($_SESSION['cart'][$id])) {
-        return 0;
-    }
-    $_SESSION['cart'][$id]--; // On enlève un produit du panier (dans les faits, on diminue la quantité de l'entrée ayant pour id $id)
-
-    // Si on atteint 0 unité, on peut supprimer l'entrée du panier, nous n'avons plus besoin de l'y stocker.
-    if ($_SESSION['cart'][$id] <= 0) {
-        unset($_SESSION['cart'][$id]);
-        return 0;
-    }
-
-    return $_SESSION['cart'][$id];
-}
-
-/**
- * Vide complètement le panier. Les deux appels à getCartContent() servent ici à s'assurer que le panier existe, tant avant qu'après la suppression
- */
-function emptyCart(): void
-{
-    // getCartContent();
-    // unset($_SESSION['cart']);
-    // getCartContent();
-    $_SESSION['cart'] = [];
+    // // Pour récupérer la première entrée du tableau, quel que soit son index, on utilise la fonction current
+    // // Doc de la fonction : https://www.php.net/manual/fr/function.current.php
+    // return current($results); // $results[0]
 }
