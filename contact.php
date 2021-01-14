@@ -25,13 +25,14 @@ if (isset($_POST['content'])) {
     }
 }
 
-if (empty($errors)) {
+if (isset($_POST['content']) && empty($errors)) {
     $_SESSION['contact'] = [
         'subject' => trim($_POST['subject']),
         'email'   => trim($_POST['email']),
         'content' => trim($_POST['content']),
     ];
 }
+
 ?>
 <form action="contact.php" method="POST">
     <?php
@@ -56,7 +57,7 @@ if (empty($errors)) {
     </div>
     <div class="form-group">
         <label for="content">Votre message</label>
-        <textarea name="content" id="content" class="form-control" required></textarea>
+        <textarea name="content" id="content" class="form-control" placeholder="40 caractères minimum"required></textarea>
     </div>
     <button type="submit" class="btn btn-primary">Envoyer</button>
 </form>

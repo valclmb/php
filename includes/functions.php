@@ -44,7 +44,7 @@ function afficheProduit(Beanie $produit)
             '.$produit->name.
         '</td>
         <td>
-            '.$produit->priceHT.'€
+            '.prixHT($produit->price).'€
         </td>
         <td style="color:'.$color.'">
             '.$produit->price.'€

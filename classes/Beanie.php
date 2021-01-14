@@ -11,6 +11,9 @@ declare(strict_types=1);
 
 class Beanie
 {
+    const AVALAIBLE_SIZES = ['XL','L','M','S'];
+    const AVALAIBLE_MATERIALS = ['Wool','Cashmere','Cotton','Silk'];
+
     /**
      * @var int
      */
@@ -76,5 +79,15 @@ class Beanie
     {
         $this->price = $prixTTC;
         $this->priceHT = $prixTTC / 1.2;
+    }
+
+    public function hasSize($size): bool
+    {
+        return in_array($size, $this->sizes);
+    }
+
+    public function hasMaterial($material): bool
+    {
+        return in_array($material, $this->materials);
     }
 }
